@@ -3,8 +3,10 @@ import { useState } from "react"
 import ColorPicker from "../components/color-picker";
 import SidebarSettings from "../components/sidebar-settings";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faCircleDot, faGear, faHeading, faList, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRotateLeft, faChevronDown, faChevronUp, faCircleDot, faGear, faHeading, faList, faPlus, faShuffle, faTrashCan, faXmark } from "@fortawesome/free-solid-svg-icons";
 import LeftSidebar from "../components/left-sidebar";
+import RightSidebar from "../components/right-sidebar";
+import SidebarButton from "../components/sidebar-button";
 
 export default function Home(){
   const shuffleArray = (arr) => {
@@ -83,45 +85,64 @@ export default function Home(){
   ]
 
   const colorStyle = {
-    color:openSidebar ? color : updatedInfo.color, 
-    border:`2px solid ${openSidebar ? borderColor : updatedInfo.borderColor}`, 
-    backgroundColor:openSidebar ? bgColor : updatedInfo.bgColor
+    color:updatedInfo.color, 
+    border:`2px solid ${updatedInfo.borderColor}`, 
+    backgroundColor:updatedInfo.bgColor
   }
+
+  const handleChangeList = (index, value) => {
+    const updatedLists = [...lists];
+    updatedLists[index] = value;
+    setLists(updatedLists);
+  };
+
+  const removeList = (index) => {
+    const updatedLists = [...lists];
+    updatedLists.splice(index, 1);
+    setLists(updatedLists);
+  };
+
+  const swapLists = (index1, index2) => {
+    const updatedLists = [...lists];
+    [updatedLists[index1], updatedLists[index2]] = [updatedLists[index2], updatedLists[index1]];
+    setLists(updatedLists);
+  };
 
   return (
     <main className={`main-page ${openSidebar ? 'active' : ''}`}>
-      <h1 className="head-title" style={{color:openSidebar ? titleColor : updatedInfo.titleColor}}>{title || 'Your title'}</h1>
-      <div className="btns">
-        {updatedInfo.lists?.map((list, index) => (
-          <button style={{color:updatedInfo.color, border:`2px solid ${updatedInfo.borderColor}`, backgroundColor:updatedInfo.bgColor}} class={`list-btn ${enabledList !== index ? 'inactive' : ''}`} key={index} onClick={() => setEnabledList(index)}>
-            <span className="list-btn-text">{list}</span>
-          </button>
-        ))}
-      </div>
-
-      <div className="btns">
-        <button style={colorStyle} class={`list-btn`}>
-          <span className="list-btn-text">Try to click the button below.</span>
-        </button>
-        <button style={colorStyle} class={`list-btn ${clickMe ? '' : 'inactive'}`} onClick={() => setClickMe(true)}>
-          <span className="list-btn-text">I will be shown when I am clicked.</span>
-        </button>
-      </div>
-
-      <LeftSidebar open={openSidebar}>
-        <button className={`left-sidebar-btn ${openSidebar ? 'active' : ''}`} onClick={() => setOpenSidebar(!openSidebar)}>
-          <FontAwesomeIcon icon={faGear} className='icons' width='20' height='20'/>
-          <p>Settings</p>
-        </button>
-        <div className={`left-sidebar-menus ${openSidebar ? '' : 'inactive'}`}>
-          {leftSidebarMenus.map(list => (
-            <button className={`left-sidebar-btn ${list.text === menu ? 'active' : ''}`} onClick={list.onClick}>
-              <FontAwesomeIcon icon={list.icon} className='icons' width='20' height='20'/>
-              <p>{list.text}</p>
+      <h1 className="head-title" style={{color:updatedInfo.titleColor}}>{updatedInfo.title || 'Your title'}</h1>
+      {updatedInfo.lists.length > 0 ? (
+        <div className="btns">
+          {updatedInfo.lists?.map((list, index) => (
+            <button style={colorStyle} class={`list-btn ${enabledList !== index ? 'inactive' : ''}`} key={index} onClick={() => setEnabledList(index)}>
+              <span className="list-btn-text">{list}</span>
             </button>
           ))}
         </div>
+      ) : (
+        <div className="btns">
+          <button style={colorStyle} class={`list-btn`}>
+            <span className="list-btn-text">Try to click the button below.</span>
+          </button>
+          <button style={colorStyle} class={`list-btn ${clickMe ? '' : 'inactive'}`} onClick={() => setClickMe(true)}>
+            <span className="list-btn-text">I will be shown when I am clicked.</span>
+          </button>
+        </div>
+      )}
+
+      <LeftSidebar open={openSidebar}>
+        <SidebarButton isActive={openSidebar} onClick={() => setOpenSidebar(!openSidebar)} text='Settings' icon={faGear}/>
+        <div className={`sidebar-menus ${openSidebar ? '' : 'inactive'}`}>
+          {leftSidebarMenus.map(list => (
+            <SidebarButton isActive={list.text === menu} onClick={list.onClick} text={list.text} icon={list.icon}/>
+          ))}
+        </div>
       </LeftSidebar>
+
+      <RightSidebar>
+        <SidebarButton text='Reset' icon={faArrowRotateLeft} onClick={() => setEnabledList()}/>
+        <SidebarButton text='Shuffle' icon={faShuffle} onClick={() => shuffleArray(updatedInfo.lists)}/>
+      </RightSidebar>
 
       <SidebarSettings open={openSidebar} animate={settingsAnim}>
         {menu === 'Button' && (
@@ -156,7 +177,7 @@ export default function Home(){
             <div className="settings-inputs">
               <div className='group-input'>
                 <h2 className="text-in-settings">Title</h2>
-                <input type="text" class='text-input' onChange={e => setTitle(e.target.value)}/>
+                <input type="text" class='text-input' placeholder='Your title' value={title} defaultValue={updatedInfo.title} onChange={e => setTitle(e.target.value)}/>
               </div>
               <div className='group-input'>
                 <h3 class='text-in-settings'>Title colour</h3>
@@ -172,10 +193,31 @@ export default function Home(){
             <p>This is the list of buttons that you can add, edit, or delete them based on your preference. You can click on any buttons to expand the text.</p>
 
             <div className="settings-inputs">
-              <div className='group-input'>
-                <h2 className="text-in-settings">Title</h2>
-                <input type="text" class='text-input' onChange={e => setTitle(e.target.value)}/>
+              {lists.map((list, index)=> 
+              <div className="list-inputs">
+                <input key={index} type="text" class='text-input' value={list} onChange={e => handleChangeList(index, e.target.value)}/>
+                {lists.length > 0 ? (
+                  <span className="manage-btns">
+                    {index > 0 && (
+                      <span onClick={() => swapLists(index, index - 1)}>
+                        <FontAwesomeIcon icon={faChevronUp}/>
+                      </span>
+                    )}
+                    {index < lists.length - 1 && (
+                      <span onClick={() => swapLists(index, index + 1)}>
+                      <FontAwesomeIcon icon={faChevronDown}/>
+                    </span>
+                    )}
+                    <span onClick={() => removeList(index)}>
+                      <FontAwesomeIcon icon={faTrashCan}/>
+                    </span>
+                  </span>
+                ): null}
               </div>
+              )}
+              <button className="add-btn" onClick={() => setLists([...lists, ''])}>
+                <FontAwesomeIcon icon={faPlus} />
+              </button>
             </div>
           </>
         )}
