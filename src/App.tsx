@@ -1,19 +1,11 @@
-import { useEffect } from "react";
 import { useState } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faArrowRotateLeft, faChevronDown, faChevronUp, faCircleDot, faGear, faHeading, faList, faPlus, faShuffle, faTrashCan, faXmark } from "@fortawesome/free-solid-svg-icons";
 import ColorPicker from "./components/ColorPicker";
 import { SidebarButton, SidebarSettings, LeftSidebar, RightSidebar } from "./components/Sidebar";
 import "./App.scss"
-
-interface Value {
-  title: string
-  titleColor: string
-  lists: string[]
   color: string
-  borderColor: string
-  bgColor: string
-}
+import { Value } from "./types";
 
 export default function App(){
   const shuffleArray = (arr: string[]) => {
@@ -164,7 +156,7 @@ export default function App(){
 
         {menu === 'Title' && (
           <>
-            <h1 className="settings-title">Title</h1>
+            <h1 className="settings-title">Title settings</h1>
             <p>The title is displayed on the top of the screen. You can customise the colour or the font size of the title as you prefer.</p>
 
             <div className="settings-inputs">

@@ -1,13 +1,7 @@
 import { ChangeEvent, useState } from "react"
+import { ColorPickerProps } from "../types"
 
-interface ColorPickerProps {
-  value: string
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void
-  defaultValue: string
-  forLabel: string
-}
-
-export default function ColorPicker({value, onChange, defaultValue, forLabel} : ColorPickerProps){
+export default function ColorPicker({ value, onChange, defaultValue, forLabel } : ColorPickerProps){
 
   const [color, setColor] = useState(defaultValue)
 

@@ -1,24 +1,5 @@
-import { ReactNode } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { IconProp } from "@fortawesome/fontawesome-svg-core"
-
-interface SidebarProps {
-  children: ReactNode
-  open?: boolean
-}
-
-interface SidebarButtonProps {
-  onClick: () => void
-  icon: IconProp
-  text: string
-  isActive?: boolean
-}
-
-interface SidebarSettingsProps {
-  children: ReactNode
-  open: boolean
-  animate: boolean
-}
+import { SidebarButtonProps, SidebarProps, SidebarSettingsProps } from "../types"
 
 export function LeftSidebar({ children, open } : SidebarProps){
   return (
