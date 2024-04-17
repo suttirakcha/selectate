@@ -4,7 +4,6 @@ import { faArrowRotateLeft, faChevronDown, faChevronUp, faCircleDot, faGear, faH
 import ColorPicker from "./components/ColorPicker";
 import { SidebarButton, SidebarSettings, LeftSidebar, RightSidebar } from "./components/Sidebar";
 import "./App.scss"
-  color: string
 import { Value } from "./types";
 
 export default function App(){
